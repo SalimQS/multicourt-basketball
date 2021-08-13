@@ -108,6 +108,7 @@ new YangInvite[MAX_PLAYERS];
 public OnFilterScriptInit()
 {
     LoadAllBasketField();
+    printf("//------------------------------\n\n\tBasket Script By Salim\n\n//------------------------------");
     return 1;
 }
 
