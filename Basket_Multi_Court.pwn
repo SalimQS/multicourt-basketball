@@ -2,9 +2,73 @@
       Credit:
       - Salim
       - P4lw4 (for helping me)
-      
+
       if u remove this, u nerd.
 */
+#include <a_samp>
+#include <streamer>
+#include <foreach>
+#include <Pawn.CMD> //u also can use zcmd or y_cmd
+#include <sscanf2>
+
+#define COLOR_WHITE 		0xFFFFFFFF
+#define COLOR_WHITEP 		0xFFE4C4FF
+#define COLOR_ORANGE   		0xDB881AFF
+#define COLOR_ORANGE2		0xFF5000FF
+#define COLOR_IVORY 		0xFFFF82FF
+#define COLOR_LIME 			0xD2D2ABFF
+#define COLOR_BLUE			0x004BFFFF
+#define COLOR_SBLUE			0x56A4E4FF
+#define COLOR_LBLUE 		0x33CCFFFF
+#define COLOR_RCONBLUE      0x0080FF99
+#define COLOR_PURPLE2 		0x5A00FFFF
+#define COLOR_PURPLE      	0xD0AEEBFF
+#define COLOR_RED 			0xFF0000FF
+#define COLOR_LRED 			0xE65555FF
+#define COLOR_LIGHTGREEN 	0x00FF00FF
+#define COLOR_YELLOW 		0xFFFF00FF
+#define COLOR_YELLOW2 		0xF5DEB3FF
+#define COLOR_LB 			0x15D4EDFF
+#define COLOR_PINK			0xEE82EEFF
+#define COLOR_PINK2		 	0xFF828200
+#define COLOR_GOLD			0xFFD700FF
+#define COLOR_FIREBRICK 	0xB22222FF
+#define COLOR_GREEN 		0x3BBD44FF
+#define COLOR_GREY			0xBABABAFF
+#define COLOR_GREY2 		0x778899FF
+#define COLOR_GREY3			0xC8C8C8FF
+#define COLOR_DARK 			0x7A7A7AFF
+#define COLOR_BROWN 		0x8B4513FF
+#define COLOR_SYSTEM 		0xEFEFF7FF
+#define COLOR_RADIO       	0x8D8DFFFF
+#define COLOR_FAMILY		0x00F77AFF
+
+#define FAMILY_E	"{F77AFF}"
+#define PURPLE_E2	"{7348EB}"
+#define RED_E 		"{FF0000}"
+#define BLUE_E 		"{004BFF}"
+#define SBLUE_E 	"{56A4E4}"
+#define PINK_E 		"{FFB6C1}"
+#define YELLOW_E 	"{FFFF00}"
+#define LG_E 		"{00FF00}"
+#define LB_E 		"{15D4ED}"
+#define LB2_E 		"{87CEFA}"
+#define GREY_E 		"{BABABA}"
+#define GREY2_E 	"{778899}"
+#define GREY3_E 	"{C8C8C8}"
+#define DARK_E 		"{7A7A7A}"
+#define WHITE_E 	"{FFFFFF}"
+#define WHITEP_E 	"{FFE4C4}"
+#define IVORY_E 	"{FFFF82}"
+#define ORANGE_E 	"{DB881A}"
+#define ORANGE_E2	"{FF5000}"
+#define GREEN_E 	"{3BBD44}"
+#define PURPLE_E 	"{5A00FF}"
+#define LIME_E 		"{D2D2AB}"
+#define LRED_E		"{E65555}"
+#define DOOM_		"{F4A460}"
+#define MATHS       "{3571FC}"
+#define REACTIONS   "{FD4141}"
 
 #define     MAX_BASKETBALL_FIELD        1 //add it when u wanna make more court
 enum BasketStruct
@@ -38,6 +102,15 @@ new PlayerCourt[MAX_PLAYERS];
 new PlayerTimer[MAX_PLAYERS];
 new PlayerShooting[MAX_PLAYERS];
 
+new YangDiInvite[MAX_PLAYERS];
+new YangInvite[MAX_PLAYERS];
+
+public OnFilterScriptInit()
+{
+    LoadAllBasketField();
+    return 1;
+}
+
 LoadAllBasketField()
 {
 	for(new i = 0; i < MAX_BASKETBALL_FIELD; i++)
@@ -59,7 +132,7 @@ EndBasket(id)
 	bsData[id][Point][0] = 0;
 	bsData[id][Point][1] = 0;
 	MoveDynamicObject(bsObject[id], bsData[id][BallDefaultPos][0], bsData[id][BallDefaultPos][1], bsData[id][BallDefaultPos][2], 10.0);
-	
+
 	foreach(new i : Player)
 	{
 	    if(PlayerCourt[i] == id)
@@ -97,18 +170,18 @@ GetNearestBasketField(playerid, Float: radius = 0.0)
 StartPlayBasketball(playerid, id, otherid=INVALID_PLAYER_ID)
 {
 	if(!IsPlayerInRangeOfPoint(playerid, 20.0, bsData[id][BallDefaultPos][0], bsData[id][BallDefaultPos][1], bsData[id][BallDefaultPos][2]))
-	    return SendActivyMessage(playerid, "ERROR", "You're not on any basketball court");
+	    return SendClientMessage(playerid, -1, "[Error] You're not on any basketball court");
 
 	if(otherid != INVALID_PLAYER_ID)
 	{//duel
 	    //pemain 1
         SetPlayerPos(playerid, bsData[id][DunkPos1][0], bsData[id][DunkPos1][1], bsData[id][DunkPos1][2]);
 	    SetPlayerAngleToCoordinates(playerid, bsData[id][Ring2Pos][0], bsData[id][Ring2Pos][1]);
-		
+
 		//pemain 2
 		SetPlayerPos(otherid, bsData[id][DunkPos2][0], bsData[id][DunkPos2][1], bsData[id][DunkPos2][2]);
 	    SetPlayerAngleToCoordinates(otherid, bsData[id][Ring2Pos][0], bsData[id][Ring2Pos][1]);
-		
+
 		PlayerCourt[playerid] = id;
 		PlayerCourt[otherid] = id;
 		PlayerHaveBall[playerid] = 1;
@@ -120,7 +193,7 @@ StartPlayBasketball(playerid, id, otherid=INVALID_PLAYER_ID)
 	{//solo
 	    SetPlayerPos(playerid, bsData[id][DunkPos1][0], bsData[id][DunkPos1][1], bsData[id][DunkPos1][2]);
 	    SetPlayerAngleToCoordinates(playerid, bsData[id][Ring2Pos][0], bsData[id][Ring2Pos][1]);
-		
+
 		PlayerCourt[playerid] = id;
 		PlayerHaveBall[playerid] = 1;
 		PlayerTimer[playerid] = SetTimerEx("PlayerBasketUpdate", 1000, true, "i", playerid);
@@ -128,7 +201,7 @@ StartPlayBasketball(playerid, id, otherid=INVALID_PLAYER_ID)
 	return 1;
 }
 
-new bawahatas[MAX_PLAYER];
+new bawahatas[MAX_PLAYERS];
 
 forward PlayerBasketUpdate(playerid);
 public PlayerBasketUpdate(playerid)
@@ -196,7 +269,7 @@ PlayerShot(playerid)
 		    SetTimerEx("ClearSekeler", 2000, false, "i", playerid);
 		    MasukkanBolaKeRing(id, 1);
 		    bsData[id][Point][1] += 2;//point ring 2 bertambah 2
-		    
+
 		    new string[200];
 		    format(string, sizeof string, "Team 1 Got 2 Point, Total: %d", bsData[id][Point][1]);
 		    foreach(new i : Player)
@@ -215,7 +288,7 @@ PlayerShot(playerid)
 		    SetTimerEx("ClearSekeler", 2000, false, "i", playerid);
 		    MasukkanBolaKeRing(id, 2);
 		    bsData[id][Point][0] += 2;//point ring 1 bertambah 2
-		    
+
 		    new string[200];
 		    format(string, sizeof string, "Team 2 Got 2 Point, Total: %d", bsData[id][Point][0]);
 		    foreach(new i : Player)
@@ -238,7 +311,7 @@ PlayerShot(playerid)
         SetTimerEx("PlaceBall2", 2000, false, "ii", id, 1);
 
         new string[200];
-        
+
         if(dist > 6.65)//three point
         {
         	bsData[id][Point][1] += 3;//point ring 2 bertambah 3
@@ -252,7 +325,7 @@ PlayerShot(playerid)
 
         ApplyAnimation(playerid,"BSKTBALL","BBALL_Jump_Shot",4.1, 0, 1, 1, 1, 1, 1);
 		SetTimerEx("ClearSekeler", 2000, false, "i", playerid);
-		
+
 	 	foreach(new i : Player)
 		{
 		    if(PlayerCourt[i] == id)
@@ -273,7 +346,7 @@ PlayerShot(playerid)
         SetTimerEx("PlaceBall2", 2000, false, "ii", id, 2);
 
         new string[200];
-        
+
         if(dist > 6.65)//three point
         {
         	bsData[id][Point][0] += 3;//point ring 1 bertambah 3
@@ -287,7 +360,7 @@ PlayerShot(playerid)
 
         ApplyAnimation(playerid,"BSKTBALL","BBALL_Jump_Shot",4.1, 0, 1, 1, 1, 1, 1);
 		SetTimerEx("ClearSekeler", 2000, false, "i", playerid);
-		
+
 		foreach(new i : Player)
 		{
 		    if(PlayerCourt[i] == id)
@@ -313,7 +386,7 @@ PlayerShot(playerid)
 
             ApplyAnimation(playerid,"BSKTBALL","BBALL_Jump_Shot",4.1, 0, 1, 1, 1, 1, 1);
 		    SetTimerEx("ClearSekeler", 2000, false, "i", playerid);
-		    
+
 		    foreach(new i : Player)
 		{
 		    if(PlayerCourt[i] == id)
@@ -332,7 +405,7 @@ public PlaceBall(id, Float:x, Float:y, Float:z)
     bsData[id][BallPosNow][0] = x;
     bsData[id][BallPosNow][1] = y;
     bsData[id][BallPosNow][2] = z;
-    
+
     if(bsData[id][MinPosX] >= x >= bsData[id][MaxPosX] || bsData[id][MinPosY] >= y >= bsData[id][MaxPosY])
     {
         MoveDynamicObject(bsObject[id], bsData[id][BallDefaultPos][0], bsData[id][BallDefaultPos][1], bsData[id][BallDefaultPos][2], 10.0);
@@ -398,75 +471,87 @@ public BolaJatuhDariRing(id, ring)
 }
 
 //IsPlayerInArea(playerid, Float:minx, Float:maxx, Float:miny, Float:maxy)
+CMD:accept(playerid, params[])
+{
+    if(GetPlayerCourt(playerid) != -1) return SendClientMessage(playerid, -1, "[Error] You playing basketball, type "YELLOW_E"'/basket end' "WHITE_E"for end your game");
+
+	if(YangInvite[playerid] >= 0)
+ 	{
+  		new id = GetNearestBasketField(playerid, 50.0);
+
+		SendClientMessageEx(YangInvite[playerid], -1, "%s Menerima tantangan anda untuk bermain basket", ReturnName(playerid));
+		SendClientMessageEx(playerid, -1, "[Basket] Anda menerima tantangan untuk bermain basket dari %s", ReturnName(YangInvite[playerid]));
+		StartPlayBasketball(YangInvite[playerid], id, playerid);
+    }
+    return 1;
+}
+        
 CMD:basket(playerid, params[])
 {
-    if(pData[playerid][IsLoggedIn] == false) return 1;
-
 	new type[20], string[128];
-	if(sscanf(params, "s[20]S()[128]", type, string)) return SendActivyMessage(playerid, "USAGE", "/basket <Duel/Solo/End>");
+	if(sscanf(params, "s[20]S()[128]", type, string)) return SendClientMessage(playerid, -1, "Usage: /basket <Duel/Solo/End>");
 
 	if(!strcmp(params, "end", true, 20))
 	{
 	    new id = GetPlayerCourt(playerid);
-	    
+
 	    if(id == -1)
 	    {
-	        SendActivyMessage(playerid, "BASKET", "You're not playing basket");
+	        SendClientMessage(playerid, -1, "[Basket] You're not playing basket");
 	        return 1;
 	    }
-	    
+
 	    EndBasket(id);
 	}
 	if(!strcmp(params, "duel", true, 20))
 	{
 	    new otherid;
-	    if(!sscanf(string, "i", otherid)) return SendActivyMessage(playerid, "USAGE", "/basket <Duel> <Playerid>");
+	    if(!sscanf(string, "i", otherid)) return SendClientMessage(playerid, -1, "Usage: /basket <Duel> <Playerid>");
 
 		new id = GetNearestBasketField(playerid, 50.0);
-	    if(id == -1) return SendActivyMessage(playerid, "ERROR", "You're not on any basketball court");
-	    if(pData[otherid][IsLoggedIn] == false) return SendActivyMessage(playerid, "ERROR", "That player not online");
-	    if(!IsPlayerInPlayerArea(playerid, otherid, 5.0)) return SendActivyMessage(playerid, "ERROR", "You too far from person you invite");
+	    if(id == -1) return SendClientMessage(playerid, -1, "[Error] You're not on any basketball court");
+	    if(!IsPlayerInPlayerArea(playerid, otherid, 5.0)) return SendClientMessage(playerid, -1, "[Error] You too far from person you invite");
 
         if(IsPlayerInRangeOfPoint(playerid, 1.0, bsData[id][BallDefaultPos][0], bsData[id][BallDefaultPos][1], bsData[id][BallDefaultPos][2]))
 	    {
-		    pData[playerid][YangDiInvite] = otherid;
-		    pData[otherid][YangDiInvite] = otherid;
-		    pData[playerid][YangInvite] = playerid;
-		    pData[otherid][YangInvite] = playerid;
+		    YangDiInvite[playerid] = otherid;
+		    YangDiInvite[otherid] = otherid;
+		    YangInvite[playerid] = playerid;
+		    YangInvite[playerid] = playerid;
 
-		    SendActivyMessage(otherid, "BASKET", "%s has invite you to playing basket. type "YELLOW_E"'/accept basket' "WHITE_E"to accept.", GetPlayerNameEx(playerid));
+		    SendClientMessageEx(otherid, -1, "[Basket] %s has invite you to playing basket. type "YELLOW_E"'/accept' "WHITE_E"to accept.", ReturnName(playerid));
 		}
-		else SendActivyMessage(playerid, "BASKET", "You're not near to any basketball court");
+		else SendClientMessage(playerid, -1, "[Basket] You're not near to any basketball court");
 	}
 	if(!strcmp(params, "solo", true, 20))
 	{
 	    new id = GetNearestBasketField(playerid, 50.0);
-	    
+
 	    /*if(!IsPlayerInRangeOfPoint(playerid, 1.0, bsData[id][BallDefaultPos][0], bsData[id][BallDefaultPos][1], bsData[id][BallDefaultPos][2]))
-	        return SendActivyMessage(playerid, "ERROR", "Kamu harus berada ditengah lapangan");*/
-	        
-        if(id == -1) return SendActivyMessage(playerid, "ERROR", "You're not on any basketball court");
-	        
+	        return SendClientMessage(playerid, -1, "[Error] Kamu harus berada ditengah lapangan");*/
+
+        if(id == -1) return SendClientMessage(playerid, -1, "[Error] You're not on any basketball court");
+
 	    foreach(new i : Player)
 	    {
 	        if(PlayerCourt[i] == id)
 	        {
 	            {
-	                return SendActivyMessage(playerid, "BASKET", "Someone use this basketball court");
+	                return SendClientMessage(playerid, -1, "[Basket] Someone use this basketball court");
 	            }
 	        }
 	    }
 	    if(IsPlayerInRangeOfPoint(playerid, 1.0, bsData[id][BallDefaultPos][0], bsData[id][BallDefaultPos][1], bsData[id][BallDefaultPos][2]))
 	    {
 	    	StartPlayBasketball(playerid, id);
-	    	SendActivyMessage(playerid, "BASKET", "You started playing basketball alone");
+	    	SendClientMessage(playerid, -1, "[Basket] You started playing basketball alone");
 		}
-		else SendActivyMessage(playerid, "BASKET", "You're not near to any basketball court");
+		else SendClientMessage(playerid, -1, "[Basket] You're not near to any basketball court");
 	}
 	return 1;
 }
 
-BS_OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
+static BS_OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
 	if(!IsPlayerInAnyVehicle(playerid))
 	{
@@ -524,26 +609,13 @@ forward ClearSekeler(playerid);
 public ClearSekeler(playerid)
 {
     ClearAnimations(playerid);
-	StopLoopingAnim(playerid);
+	//StopLoopingAnim(playerid);
 	SetPlayerSpecialAction(playerid, SPECIAL_ACTION_NONE);
 	TogglePlayerControllable(playerid, 1);
 	if(PlayerHaveBall[playerid])
 	{
 		PlayerShooting[playerid] = 0;
 	}
-}
-
-SetPlayerAngleToCoordinates(playerid, Float:X, Float:Y)
-{
-    new Float:pX, Float:pY, Float:pZ, Float:ang;
-    GetPlayerPos(playerid, pX, pY, pZ);
-    if( Y > pY ) ang = (-acos((X - pX) / floatsqroot((X - pX)*(X - pX) + (Y - pY)*(Y - pY))) - 90.0);
-    else if( Y < pY && X < pX ) ang = (acos((X - pX) / floatsqroot((X - pX)*(X - pX) + (Y - pY)*(Y - pY))) - 450.0);
-    else if( Y < pY ) ang = (acos((X - pX) / floatsqroot((X - pX)*(X - pX) + (Y - pY)*(Y - pY))) - 90.0);
-    if(X > pX) ang = (floatabs(floatabs(ang) + 180.0));
-    else ang = (floatabs(ang) - 180.0);
-
-    return SetPlayerFacingAngle(playerid, ang);
 }
 
 forward Float:GetPlayerAngleToCoordinates(playerid, Float:X, Float:Y);
@@ -558,6 +630,19 @@ public Float:GetPlayerAngleToCoordinates(playerid, Float:X, Float:Y)
     else ang = (floatabs(ang) - 180.0);
 
     return ang;
+}
+
+SetPlayerAngleToCoordinates(playerid, Float:X, Float:Y)
+{
+    new Float:pX, Float:pY, Float:pZ, Float:ang;
+    GetPlayerPos(playerid, pX, pY, pZ);
+    if( Y > pY ) ang = (-acos((X - pX) / floatsqroot((X - pX)*(X - pX) + (Y - pY)*(Y - pY))) - 90.0);
+    else if( Y < pY && X < pX ) ang = (acos((X - pX) / floatsqroot((X - pX)*(X - pX) + (Y - pY)*(Y - pY))) - 450.0);
+    else if( Y < pY ) ang = (acos((X - pX) / floatsqroot((X - pX)*(X - pX) + (Y - pY)*(Y - pY))) - 90.0);
+    if(X > pX) ang = (floatabs(floatabs(ang) + 180.0));
+    else ang = (floatabs(ang) - 180.0);
+
+    return SetPlayerFacingAngle(playerid, ang);
 }
 
 GetXYInFrontOfPlayer(playerid, &Float:x, &Float:y, Float:distance)
@@ -580,4 +665,59 @@ GetXYZInFrontPlayer(playerid, &Float:x, &Float:y)
 	GetPlayerFacingAngle(playerid, fa);
     x += (0.6 * floatsin(-fa, degrees));
    	y += (0.6 * floatcos(-fa, degrees));
+}
+
+ReturnName(playerid)
+{
+	new name[20+1];
+	GetPlayerName(playerid, name, sizeof name);
+	return name;
+}
+
+IsPlayerInPlayerArea(playerid, otherid, Float:range)
+{
+	new Float:pos[3];
+	GetPlayerPos(playerid, pos[0], pos[1], pos[2]);
+	if(IsPlayerInRangeOfPoint(otherid, range, pos[0], pos[1], pos[2]))
+	{
+	    return 1;
+	}
+	return 0;
+}
+
+SendClientMessageEx(playerid, color, const text[], {Float, _}:...)
+{
+    static
+        args,
+            str[144];
+
+    if((args = numargs()) == 3)
+    {
+            SendClientMessage(playerid, color, text);
+    }
+    else
+    {
+        while (--args >= 3)
+        {
+            #emit LCTRL 5
+            #emit LOAD.alt args
+            #emit SHL.C.alt 2
+            #emit ADD.C 12
+            #emit ADD
+            #emit LOAD.I
+            #emit PUSH.pri
+        }
+        #emit PUSH.S text
+        #emit PUSH.C 144
+        #emit PUSH.C str
+        #emit PUSH.S 8
+        #emit SYSREQ.C format
+        #emit LCTRL 5
+        #emit SCTRL 4
+
+        SendClientMessage(playerid, color, str);
+
+        #emit RETN
+    }
+    return 1;
 }
