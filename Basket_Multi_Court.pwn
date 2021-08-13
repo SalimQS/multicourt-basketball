@@ -111,6 +111,26 @@ public OnFilterScriptInit()
     return 1;
 }
 
+public OnPlayerDisconnect(playerid, reason)
+
+{
+    new id = GetPlayerCourt(playerid);
+	if(id != -1)
+	{
+	   	EndBasket(id);
+	}
+}
+
+public OnPlayerDeath(playerid, killerid, reason)
+{
+    new id = GetPlayerCourt(playerid);
+	if(id != -1)
+	{
+	   	EndBasket(id);
+	}
+
+}
+
 LoadAllBasketField()
 {
 	for(new i = 0; i < MAX_BASKETBALL_FIELD; i++)
