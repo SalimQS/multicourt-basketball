@@ -128,9 +128,10 @@ StartPlayBasketball(playerid, id, otherid=INVALID_PLAYER_ID)
 	return 1;
 }
 
-new bawahatas[MAX_PLAYERS];
+new bawahatas[MAX_PLAYER];
 
-function PlayerBasketUpdate(playerid)
+forward PlayerBasketUpdate(playerid);
+public PlayerBasketUpdate(playerid)
 {
     if(PlayerHaveBall[playerid] == 1)
     {
@@ -324,7 +325,8 @@ PlayerShot(playerid)
     }
 }
 
-function PlaceBall(id, Float:x, Float:y, Float:z)
+forward PlaceBall(id, Float:x, Float:y, Float:z);
+public PlaceBall(id, Float:x, Float:y, Float:z)
 {
     MoveDynamicObject(bsObject[id], x, y, z, 10.0);
     bsData[id][BallPosNow][0] = x;
@@ -340,7 +342,8 @@ function PlaceBall(id, Float:x, Float:y, Float:z)
     }
 }
 
-function PlaceBall2(id, ring)
+forward PlaceBall2(id, ring);
+public PlaceBall2(id, ring)
 {
     switch(ring)
 	{
@@ -372,7 +375,8 @@ MasukkanBolaKeRing(id, ring)
     }
 }
 
-function BolaJatuhDariRing(id, ring)
+forward BolaJatuhDariRing(id, ring);
+public BolaJatuhDariRing(id, ring)
 {
     switch(ring)
 	{
@@ -462,7 +466,7 @@ CMD:basket(playerid, params[])
 	return 1;
 }
 
-function BS_OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
+BS_OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 {
 	if(!IsPlayerInAnyVehicle(playerid))
 	{
@@ -511,7 +515,13 @@ function BS_OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
 	return 1;
 }
 
-function ClearSekeler(playerid)
+public OnPlayerKeyStateChange(playerid, newkeys, oldkeys)
+{
+    BS_OnPlayerKeyStateChange(playerid, newkeys, oldkeys);
+}
+
+forward ClearSekeler(playerid);
+public ClearSekeler(playerid)
 {
     ClearAnimations(playerid);
 	StopLoopingAnim(playerid);
@@ -536,7 +546,8 @@ SetPlayerAngleToCoordinates(playerid, Float:X, Float:Y)
     return SetPlayerFacingAngle(playerid, ang);
 }
 
-function Float:GetPlayerAngleToCoordinates(playerid, Float:X, Float:Y)
+forward Float:GetPlayerAngleToCoordinates(playerid, Float:X, Float:Y);
+public Float:GetPlayerAngleToCoordinates(playerid, Float:X, Float:Y)
 {
     new Float:pX, Float:pY, Float:pZ, Float:ang;
     GetPlayerPos(playerid, pX, pY, pZ);
