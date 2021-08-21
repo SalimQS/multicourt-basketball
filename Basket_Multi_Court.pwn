@@ -112,6 +112,11 @@ public OnFilterScriptInit()
     return 1;
 }
 
+public OnPlayerConnect(playerid)
+{
+    PlayerCourt[playerid] = -1;
+}
+
 public OnPlayerDisconnect(playerid, reason)
 
 {
