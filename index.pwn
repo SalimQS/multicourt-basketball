@@ -4,6 +4,13 @@
       - P4lw4 (for helping me)
 
       if u remove this, u dumb.
+
+	//////////////////////////////////////////////////////////
+	#Add More Field?
+	- Go to line 119
+	- Add more array data
+	- fiend automatically load (if u input all the data correct)
+	//////////////////////////////////////////////////////////
 */
 #include <a_samp>
 #include <streamer>
@@ -94,7 +101,22 @@ enum BasketStruct
 new bsObject[MAX_BASKETBALL_FIELD];
 new bsData[MAX_BASKETBALL_FIELD][BasketStruct] =
 {
-	{"East Los Santos BasketBall Court", {2290.482910, -1514.774291, 28.875000}, {2290.56, -1514.91, 26.87}, {2289.982910, -1514.774291, 28.875000}, {2290.683105, -1541.114257, 28.875000}, {2290.64, -1541.00, 26.87}, {2291.183105, -1541.114257, 28.875000}, {2290.482910, -1528.274291, 26.075000}, {2290.482910, -1514.774291, 26.075000}, {2290.683105, -1541.074218, 26.075000}, {2290.482910, -1528.274291, 26.075000}, {0, 0}, 2300.0, 2280.0, -1513.0, -1542.0}
+	{
+		"East Los Santos BasketBall Court", //field name
+		{2290.482910, -1514.774291, 28.875000}, //ring position number 1 (for the ball going in)
+		{2290.56, -1514.91, 26.87}, //player position for dunk for ring 1, near ring position (down of the ring)
+		{2289.982910, -1514.774291, 28.875000}, //ball position if it miss for ring 1
+		{2290.683105, -1541.114257, 28.875000}, //ring position number 2 (same as ring number 1, for the ball going in)
+		{2290.64, -1541.00, 26.87}, //dunk position for ring 2
+		{2291.183105, -1541.114257, 28.875000}, //missed ball position for ring 2
+		{2290.482910, -1528.274291, 26.075000}, //ball default position before player pickup it (usually in the middle of field)
+		{2290.482910, -1514.774291, 26.075000}, //ball position if the ball successfully entered ring 1 (on the ground level)
+		{2290.683105, -1541.074218, 26.075000}, //ball position if the ball successfully entered ring 2 (on the ground level)
+		{2290.482910, -1528.274291, 26.075000}, //current ball position
+		{0, 0}, //current team score stored here
+		2300.0, 2280.0, -1513.0, -1542.0 //field area define (Max position x, Min position x, Max position y, Min position y)
+	}
+	//add array here if u want insert more basket field ingame (dont forget to add comma)
 };
 
 new PlayerHaveBall[MAX_PLAYERS];
