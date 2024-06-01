@@ -3,7 +3,7 @@
       - Salim
       - P4lw4 (for helping me)
 
-      if u remove this, u nerd.
+      if u remove this, u dumb.
 */
 #include <a_samp>
 #include <streamer>
